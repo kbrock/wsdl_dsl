@@ -1,0 +1,17 @@
+.quote {
+	color:#369; font-weight:bold
+}
+.comment {
+	color:#999 !important;
+	font-weight:bold;
+}
+.keyword {
+	color:#606;
+	font-weight:bold;
+}
+.data {
+	color:#066; font-weight:bold;
+}
+.option {
+	color:#036; font-weight:bold;
+}

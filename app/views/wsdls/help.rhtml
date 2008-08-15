@@ -1,0 +1,35 @@
+<pre><code><%#
+<b>type</b> 'name2', plural => false <b>do</b>
+  string 'first'
+  string 'middle'
+  string 'last'
+<b>end</b>
+%>
+<b>type</b> 'status', values => ['A','B','C','D']
+<b>type</b> 'name' <b>do</b>
+  string 'str1'
+  integer 'int1'
+  float 'float1'
+  boolean 'bool1'
+  status full_name
+<b>end</b>
+
+<b>fault</b> 'fault1' <b>do</b>
+  string 'message'
+<b>end</b>
+
+#input and output can be short or long form.
+#exclude can take an array
+<b>method</b> 'create' <b>do</b>
+describe "method to create stuff."
+  input <b>do</b>
+    timecard, explode => true, exclude => 'id'
+    string 'another field'
+    integer 'bit_array', array => true
+  <b>end</b>
+  output timecard
+  fault badstuff
+<b>end</b>
+
+<b>crud</b> 'timecard'
+</code></pre>

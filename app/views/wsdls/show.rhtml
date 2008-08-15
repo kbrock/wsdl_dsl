@@ -1,0 +1,21 @@
+<%
+	described={}
+%>
+<% if @code.nil? #code not defined-%>
+<b>no types defined</b>
+<% else #code defined-%>
+<!-- todo put link to image here -->
+
+<%   @code.methods.each do |m| #methods-%>
+<h2><%=m.name%> Overview</h2>
+<%     if m.description #description defined-%>
+<p><%=m.description%></p>
+<%     end #description defined-%>
+<!-- diagram -->
+<h2><%=m.name%> Inputs and Outputs</h2>
+<h3>Inputs</h3>
+<%=    render :partial=>'shared/fields_dscr', :object => m.inputs, :locals=>{:described=>described, :ctx=>"#{m.name} input parameter"} %>
+<h3>Outputs</h3>
+<%=    render :partial=>'shared/fields_dscr', :object => m.outputs, :locals=>{:described=>described, :ctx=>"#{m.name} output parameter"} %>
+<%   end #methods-%>
+<% end #code defined %>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<% if @code.description -%>
+        <!-- <%=@code.description%>-->
+<% end -%>
+<xs:schema
+	targetNamespace="<%=@code.soap_namespace%>"
+	<%  @code.namespaces.each do |t| -%>
+			xmlns:<%=t.namespace_abbr%>="<%=t.soap_namespace%>"
+	<%  end -%>
+	elementFormDefault="unqualified"
+	attributeFormDefault="unqualified"
+	version="1.0">
+<% @code.local_types.each do |complextype| -%>
+<%= render :partial => 'shared/complextype', :object=>complextype  %>
+<% end -%>
+<% @code.enumerations.each do |e| -%>
+<%= render :partial => 'shared/enumeration', :object=>e  %>
+<% end%>
+</xs:schema>

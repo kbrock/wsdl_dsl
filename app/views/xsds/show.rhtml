@@ -1,0 +1,16 @@
+<%
+	described={}
+%>
+<% if @code.nil? #code not defined-%>
+<b>no types defined</b>
+<% else #code defined-%>
+<!-- todo put link to image here -->
+<%   @code.local_types.each do |t| #local_types-%>
+<h2>Structure <%=t.name%></h2>
+<%     if t.description #has description-%>
+<p><%=t.description%></p>
+<%     end #has description -%>
+<h2><%=t.name%> Fields</h2>
+<%= render :partial => 'shared/fields_dscr', :object => t, :locals => {:described=>described, :ctx=>"#{t.name}"} %>
+<%   end #local_types -%>
+<% end #code defined %>

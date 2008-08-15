@@ -1,0 +1,47 @@
+<h1>http://<%=@wsdl.host%>/<%=@wsdl.application%>/services/<%=@wsdl.soap_name%> [<%= link_to 'Edit', edit_wsdl_path(@wsdl) %>]</h1>
+<!-- @wsdl.code.soap_name, @wsdl.name -->
+<p>Xsds referenced:
+<% @wsdl.xsds.each do |x| -%>
+    <%= link_to x.name, edit_xsd_path(x) %>
+<% end -%>
+</p>
+
+<% @code.methods.each do |m| -%>
+<h2><%=m.name%></h2>
+<% if m.description -%>
+<p><%=m.description%></p>
+<% end -%>
+<!-- diagram -->
+<table>
+<thead>
+<tr>
+	<th>field</th>
+	<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr><th colspan="2">inputs:</th></tr>
+<% m.inputs.fields.each do |f| -%>
+<tr>
+	<td><%=f.name%></td>
+	<td><%=f.description%></td>
+</tr>
+<% end -%>
+<tr><th colspan="2">outputs:</th></tr>
+<% m.outputs.fields.each do |f| -%>
+<tr>
+	<td><%=f.name%></td>
+	<td><%=f.description%></td>
+</tr>
+<% end -%>
+</tbody>
+</table>
+<% end -%>
+<%#
+<h2>meta data</h2>
+<pre><code><%=show_ruby @wsdl.contents % ></code></pre>
+<p>
+  <b>Schemas</b> <small>[<%= link_to 'New', new_xsd_path % >]</small><br />
+</p>
+%>
+

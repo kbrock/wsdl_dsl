@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title>Wsdl: <%= controller.action_name %></title>
+<%= stylesheet_link_tag 'scaffold','format' %>
+</head>
+<body>
+<p style="color: green"><%= flash[:notice] %></p>
+<!-- header -->
+<%= link_to 'home', "/wsdl/" %> >
+<!-- (  New 
+<%= link_to 'wsdl', new_wsdl_path %> 
+<%= link_to 'xsd', new_xsd_path %> ) > 
+-->
+<% unless @wsdl.nil? or controller.action_name == "new" #show wsdl info if a wsdl object is present-%>
+
+<b><%= "WSDL #{@wsdl.name}"%></b>  |
+<%#= link_to "WSDL #{@wsdl.name}",formatted_wsdl_path(@wsdl,:html) -%>
+
+<% if controller.action_name == "edit" # link to show for edit -%>
+<%= link_to 'show', formatted_wsdl_path(@wsdl,:html) %> |
+<% else #link to edit for show -%>
+<%= link_to 'edit', formatted_edit_wsdl_path(@wsdl,:html) %> |
+<% end %>
+<%= link_to 'wsdl', "/wsdl/#{@wsdl.name}.wsdl" %>
+[<%= link_to 'inline', "/wsdl/#{@wsdl.name}.inline.wsdl" %>] |
+<%= link_to 'picture', formatted_wsdl_path(@wsdl,:png) %> |
+<%= link_to 'java', formatted_java_wsdl_path(@wsdl,:zip) %>
+<!--
+<%= link_to 'dot', formatted_wsdl_path(@wsdl,:dot) %> |
+<%= link_to 'table', formatted_table_wsdl_path(@wsdl,:html) %> |
+<%= link_to 'meta', formatted_meta_wsdl_path(@wsdl,:html) %> |
+-->
+
+<% unless controller.action_name == "edit" #edit hides some fields that are edited -%>
+<%   unless @code.nil? #show service url -%>
+<h2><%=@code.service_url%></h2>
+<%   end #show service url -%>
+<p>Xsds referenced:
+<% @wsdl.xsds.each do |x| #list xsd references-%>
+    <%= link_to x.name, xsd_path(x) %>
+<% end #list xsd references-%>
+</p>
+<% end #edit hides some fields that are edited -%>
+<% end #show wsdl info if a wsdl object is present -%>
+<!-- /header -->
+<%= yield  %>
+<!-- footer -->
+<% unless @wsdl.nil? or controller.action_name == "new" -%>
+<% if controller.action_name == "edit" # link to show for edit -%>
+<%= link_to 'show', formatted_wsdl_path(@wsdl,:html) %> |
+<% else #link to edit for show -%>
+<%= link_to 'edit', formatted_edit_wsdl_path(@wsdl,:html) %> |
+<% end %>
+<%= link_to 'wsdl', "/wsdl/#{@wsdl.name}.wsdl" %>
+[<%= link_to 'inline', "/wsdl/#{@wsdl.name}.inline.wsdl" %>] |
+<%= link_to 'picture', formatted_wsdl_path(@wsdl,:png) %> |
+<%= link_to 'java', formatted_java_wsdl_path(@wsdl,:zip) %>
+<!--
+<%= link_to 'dot', formatted_wsdl_path(@wsdl,:dot) %> |
+<%= link_to 'table', formatted_table_wsdl_path(@wsdl,:html) %> |
+<%= link_to 'meta', formatted_meta_wsdl_path(@wsdl,:html) %> |
+-->
+<% end -%>
+<!-- /footer -->
+</body>
+</html>

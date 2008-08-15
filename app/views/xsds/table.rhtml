@@ -1,0 +1,28 @@
+<% if @code.nil? -%>
+<b>no types defined</b>
+<% else -%>
+<% @code.local_types.each do |t| -%>
+<% unless t.derived -%>
+<h2><structure><%=t.name%></h2>
+<% if t.description -%>
+<p><%=t.description%></p>
+<% end #description -%>
+<table>
+<thead>
+<tr>
+	<th>field</th>
+	<th>description</th>
+</tr>
+</thead>
+<tbody>
+<% t.fields.each do |f| -%>
+<tr>
+	<td><%=f.name%></td>
+	<td><%=f.description%></td>
+</tr>
+<% end #fields -%>
+</tbody>
+</table>
+<% end #derived -%>
+<% end #local_types -%>
+<% end #no code-%>

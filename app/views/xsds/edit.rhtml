@@ -1,0 +1,27 @@
+<%= error_messages_for :xsd %>
+
+<% if controller.action_name=='edit'
+	 form_options={:url => xsd_path(@xsd), :html => { :method => :put }}
+   else
+	 form_options={:url => xsds_path}
+   end
+-%>
+<% form_for(:xsd, form_options) do |f| %>
+  <p>
+    <b>Name</b><br />
+    <%= f.text_field :name %>
+  </p>
+<p><b>Namespace</b> <br /><%= f.text_field :namespace %> <small>people,example,com</small></p>
+<p><b>namespace abbr</b> <br /><%= f.text_field :namespace_abbr %> <small>tns</small></p>
+  <p>
+    <b>Contents</b> <%= link_to 'help', formatted_help_wsdls_path(:html), :target=>'_blank' %><br />
+    <%= f.text_area :contents %>
+  </p>
+  <p>
+<% if controller.action_name=='edit' -%>
+<%= submit_tag "Update" %>
+<% else #new -%>
+<%= submit_tag "Create" %>
+<% end -%>
+  </p>
+<% end %>

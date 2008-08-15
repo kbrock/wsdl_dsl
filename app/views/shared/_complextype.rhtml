@@ -1,0 +1,17 @@
+<% if complextype.description -%>
+        <!-- <%=complextype.description%>-->
+<% end -%>
+            <xs:complexType name="<%= complextype.soap_name %>">
+<% unless complextype.fields.empty? -%>
+		    <xs:sequence>
+<% complextype.fields.each do |f| -%>
+<% unless f.hidden? #dont show hidden types -%>
+<% if f.description -%>
+        		<!-- <%=f.description%>-->
+<% end -%>
+			    <xs:element name="<%=f.name%>" type="<%=f.qualified_type_soap_name %>"<%=" minOccurs='#{f.min||'1'}' maxOccurs='#{f.max||'1'}'" unless (f.max.nil? and f.min.nil?) %>/>
+<% end -%>
+<% end #dont show hidden types -%>
+		    </xs:sequence>
+<% end -%>
+	    </xs:complexType>

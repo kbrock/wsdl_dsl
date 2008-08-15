@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title>Xsd: <%= controller.action_name %></title>
+<%= stylesheet_link_tag 'scaffold','format' %>
+</head>
+<body>
+<p style="color: green"><%= flash[:notice] %></p>
+<!-- header -->
+<%= link_to 'home', "/wsdl/" %> >
+<!-- ( New 
+<%= link_to 'wsdl', new_wsdl_path %> 
+<%= link_to 'xsd', new_xsd_path %> ) >
+-->
+<% unless @xsd.nil? or controller.action_name == "new" #show xsd info if an xsd object is present -%>
+
+<b><%= "XSD #{@xsd.name}"%></b> |
+<%#= link_to "XSD #{@xsd.name}",formatted_xsd_path(@xsd,:html) -%>
+<% if controller.action_name == "edit" # link to show for edit -%>
+<%= link_to 'show', formatted_xsd_path(@xsd,:html) %> |
+<% else #link to edit for show -%>
+<%= link_to 'edit', formatted_edit_xsd_path(@xsd,:html) %> |
+<% end %>
+<%= link_to 'xsd', "/wsdl/#{@xsd.name}.xsd" %> |
+<%= link_to 'picture', formatted_xsd_path(@xsd,:png) %> |
+<%= link_to 'java code', formatted_java_xsd_path(@xsd,:zip) %>
+<!--
+<%= link_to 'dot', formatted_xsd_path(@xsd,:dot) %> |
+<%= link_to 'table', formatted_table_xsd_path(@xsd,:html) %> |
+<%= link_to 'meta', formatted_meta_xsd_path(@xsd,:html) %> |
+-->
+<% end #show xsd info if an xsd object is present -%>
+<!-- /header -->
+<%= yield  %>
+<!-- footer -->
+<% unless @xsd.nil? or controller.action_name == "new" #show xsd info if an xsd object is present -%>
+<% if controller.action_name == "edit" # link to show for edit -%>
+<%= link_to 'show', formatted_xsd_path(@xsd,:html) %> |
+<% else #link to edit for show -%>
+<%= link_to 'edit', formatted_edit_xsd_path(@xsd,:html) %> |
+<% end %>
+<%= link_to 'xsd', "/wsdl/#{@xsd.name}.xsd" %> |
+<%= link_to 'picture', formatted_xsd_path(@xsd,:png) %> |
+<%= link_to 'java code', formatted_java_xsd_path(@xsd,:zip) %>
+<!--
+<%= link_to 'dot', formatted_xsd_path(@xsd,:dot) %>  |
+<%= link_to 'table', formatted_table_xsd_path(@xsd,:html) %> |
+<%= link_to 'meta', formatted_meta_xsd_path(@xsd,:html) %> |
+-->
+<% end #show xsd info if an xsd object is present -%>
+<!-- /footer -->
+</body>
+</html>

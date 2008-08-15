@@ -1,0 +1,57 @@
+#
+#  service <%=@code.name%>
+#
+<%
+  #We want to make sure we output all referenced types. And we want to link to them
+
+  #list of all the complex types that need to be defined.
+  #true means it is defined, false means it needs to be defined
+  defined={}
+  ignore=(params[:ignore]||"").split(',').each do |f| #for each ignored parameter
+	defined[f]=true #mark it that we have already defined it
+  end
+-%>
+digraph <%= @code.name %> {
+	label="<%= @code.name %>"
+	node [ shape=Mrecord, color="#3d6b8e", fontcolor="#334466", width="1.2", fillcolor="#eeeeee", style=filled ]
+#for edge arrowhead="none", 
+	edge [ color="#3d6b8e", labelcolor="#334466"]
+	subgraph {
+		rank="same";
+		
+<% @code.methods.each do |m| #all the methods
+-%>
+		<%=m.name%> [label="{<%=m.name -%>}"]
+
+		<%=dot_struct(m.inputs,"#{m.name}_inputs","inputs")%>
+		<%=dot_struct(m.outputs,"#{m.name}_outputs","outputs")%>
+        <%=m.name%>_inputs -> <%=m.name%> -> <%=m.name%>_outputs  [minlen=3]
+	}
+<% end #methods-%>
+	
+	// these are referenced from the inputs/outputs to complex types
+	//putting outside the subgraph to show on another line
+	//edge [ style=dashed]
+	node [ style=none ]
+<%
+@code.methods.each do |m| #methods
+-%>
+<%= dot_links(m.inputs,"#{m.name}_inputs",defined,ignore) %>
+<%= dot_links(m.outputs,"#{m.name}_outputs",defined,ignore) %>
+<%   m.faults.each do |f| #faults
+	   #unless ignore[f.name].nil?
+	defined[f.name]=false if defined[f.name].nil?
+	
+-%>
+		<%=m.name%> -> <%=f.name%>
+<%
+       #end #ignore
+     end #faults -%>
+<%
+end #methods
+-%>
+  //references from method objects to detailed nodes
+<%=
+  dot_recurse(defined,ignore,@code)
+-%>
+}

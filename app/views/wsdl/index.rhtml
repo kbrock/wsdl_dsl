@@ -1,0 +1,29 @@
+<h1>Listings</h1>
+<h2>Wsdl <small>[<%= link_to 'New', new_wsdl_path %>]</small></h2>
+<ul>
+<% for wsdl in @wsdls -%>
+	<li> 
+		<%= link_to wsdl.name, formatted_wsdl_path(wsdl,:html) %>
+		<%= link_to '[wsdl]', "/wsdl/#{wsdl.name}.wsdl" %>
+		<%= link_to '[inline]', "/wsdl/#{wsdl.name}.inline.wsdl" %>
+		<%= link_to '[picture]', formatted_wsdl_path(wsdl,:png) %>
+		<%= link_to '[code]', formatted_java_wsdl_path(wsdl,:zip) %>
+		<small><%= link_to '[Edit]', formatted_edit_wsdl_path(wsdl,:html) %></small>
+		<small><%= link_to '[X]', wsdl_path(wsdl), :confirm => 'Are you sure?', :method => :delete %></small>
+	</li>
+<% end -%>
+</ul>
+<h2>Xsd <small>[<%= link_to 'New', new_xsd_path %>]</small></h2>
+<ul>
+<% for xsd in @xsds -%>
+	<li> 
+		<%= link_to xsd.name, formatted_xsd_path(xsd,:html) %>
+		<%= link_to '[xsd]', "/wsdl/#{xsd.name}.xsd" %>
+		<%= link_to '[picture]', formatted_xsd_path(xsd,:png) %>
+		<%= link_to '[code]', formatted_java_xsd_path(xsd,:zip) %>
+		<small><%= link_to '[Edit]', formatted_edit_xsd_path(xsd,:html) %></small>
+		<small><%= link_to '[X]', xsd_path(xsd),  :method => :delete %></small>
+		<!-- :confirm => 'Are you sure?', -->
+	</li>
+<% end -%>
+</ul>

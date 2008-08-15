@@ -1,0 +1,10 @@
+<% if enumeration.description -%>
+        <!-- <%=enumeration.description%>-->
+<% end -%>
+<xs:simpleType name="<%= enumeration.soap_name %>">
+	<xs:restriction base="<%= enumeration.field_type.qualified_soap_name%>">
+<% enumeration.values.each do | v| %>
+		<xs:enumeration value="<%=v%>" />
+<% end %>
+	</xs:restriction>
+</xs:simpleType>
