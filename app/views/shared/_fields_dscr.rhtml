@@ -4,15 +4,13 @@
   described[fields_dscr.name]=fields_dscr.name
   fields_dscr.fields.each do |f|
 -%>
-<li><b><%=f.name%></b><br />
-	<p style="margin: 0 0 0 1em;"><%=f.description%>
-	<%= "<b>see #{described[f.field_type.name]}</b>" unless described[f.field_type.name].nil? %>
-	</p>
+<li><%=if described[f.field_type.name].nil? then f.name else link_to f.name, "##{described[f.field_type.name]}" end %><br />
+	<p style="margin: 0 0 0 1em;"><%=f.description%></p>
 <% 
     fs=f.field_type
     if fs.complex? and described[fs.name].nil?
 	  described[fs.name]="#{ctx} #{f.name}"
-%> <b style="margin: 0 0 0 1em;"><%=fs.name %> contains:</b>
+%> <b style="margin: 0 0 0 1em;"><span id="<%=fs.name%>"><%=fs.name%></span> contains:</b>
 <%=	render :partial => 'shared/fields_dscr', :object => fs, :locals => {:described=>described, :ctx => ctx} %>
 <%
     end #needs to be described

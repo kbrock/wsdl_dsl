@@ -30,7 +30,6 @@ class WsdlsController < ApplicationController
       format.xml  { render :xml => @wsdl.to_xml }
       format.wsdl { render :template => 'wsdls/show_wsdl', :layout => false }
       format.dot  { render :inline=> Gen::DotGen.new.wsdl_dot(@code,params[:ignore]), :layout => false }
-#      format.dot  { render :template => 'wsdls/show_dot', :layout => false }
       format.png { png }
     end
     if params[:format] == 'table.html'
@@ -45,6 +44,7 @@ class WsdlsController < ApplicationController
 
     @code = @wsdl.code(nil,external) #will raise exceptions - let it go through
 
+#    debug to ensure the correct java types are in there
 #    render :text=>"e types #{@code.local_types.collect(){|t| t.name}.join(",")}"
 #    return
 

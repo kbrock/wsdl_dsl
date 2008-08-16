@@ -76,11 +76,7 @@ class WsdlDef < NamespacedNode
     super(wsdl_name.to_s,'PortType',options)
 
     #define default schema types
-
-    #skipped    'byte' 'decimal' 'integer' 'long' 'short' 'unsignedByte' 'unsignedInt' 'unsignedShort'
-    ['boolean', 'dateTime','date','double', 'float','int', 'string', 'time', 'duration'].each do |name|
-      @types << SimpleTypeDef.new(name)
-    end
+    @types.push *SimpleTypeDef.all
   end
   
   def self.parse(wsdl_name,options,str=nil, &block)
@@ -146,13 +142,8 @@ class WsdlDef < NamespacedNode
   #    unless plural_name == false || plural_name == "false" || plural_name == ''
       unless plural_name == false || plural_name == "false" || plural_name == '' || plural_name.nil?
         #add check if pluralize is defined
-        if plural_name.nil? or plural_name == true
-          if defined? name.pluralize
-            plural_name=name.pluralize
-          else
-            plural_name="#{name}s"
-          end
-        end  #derive plural name
+        
+        plural_name=name.pluralize if plural_name.nil? or plural_name == true
 
         plural_name = plural_name.to_s
 
@@ -210,16 +201,6 @@ class WsdlDef < NamespacedNode
   def crud(single,plural=nil,flt=nil,options={})
     single=find_type_by_name single
     
-    #if one is not defined, pick one
-    if plural.nil?
-      if defined? single.name.pluralize
-        plural=single.name.pluralize
-      else
-        plural="#{single.name}s"
-      end 
-    end
-    plural=find_type_by_name(plural)
-    
     #pick a fault if one is not specified
     unless flt == false
       flt_name=flt||"#{cc_name}ServiceFault"
@@ -231,27 +212,28 @@ class WsdlDef < NamespacedNode
       end
     end
 
-    method "Retrieve#{plural.cc_name}" do
-      output plural
+    method "Retrieve#{cc single.name.pluralize}" do
+      output single, :array => true
       fault flt unless flt.nil?
     end
-    method "Create#{single.cc_name}" do
+
+    method "Create#{cc single.name}" do
       input single, :explode => true, :exclude=> ['id','ID','Id']
-      output plural
+      output single, :array => true
       fault flt unless flt.nil?
     end
-    method "Retrieve#{single.cc_name}" do
-      input 'string', 'id'
+    method "Retrieve#{cc single.name}" do
+      input string, 'id'
       output single
       fault flt unless flt.nil?
     end
-    method "Update#{single.cc_name}" do
+    method "Update#{cc single.name}" do
       input single, :explode => true
       output single
       fault flt unless flt.nil?
     end
-    method "Delete#{single.cc_name}" do
-      input 'string', 'id'
+    method "Delete#{cc single.name}" do
+      input string, 'id'
       fault flt unless flt.nil?
     end
   end

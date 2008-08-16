@@ -4,7 +4,7 @@ class Wsdl < ActiveRecord::Base
 
   def code c=nil,external=true
     c||=WsdlDef.new name, {
-      :namespace => [name,"services","company","com"],
+      :namespace_array => [name,"services","company","com"],
       :namespace_abbr => "tns",
       :file_name => wsdl_file_name
       }
@@ -24,10 +24,12 @@ class Wsdl < ActiveRecord::Base
     c
   end
 
+  include CamelCase
   #only used by soap_name
   def cc_name()
     #@code.cc_name
-    name.to_s.gsub(/(^| )(.)/){$2.upcase}
+#    name.to_s.gsub(/(^| )(.)/){$2.upcase}
+    cc(name.to_s)
   end
 
   def soap_name()

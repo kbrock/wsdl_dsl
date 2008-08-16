@@ -30,16 +30,16 @@ class NamespacedNode
     
     #they can pass in namespace as an array
     #TODO: do more here
-    if @namespace_array.nil?
-      #TODO: railse "issue #{@name} - not specifying namespace_array (gave namespace of #{@namespace})"
-      @namespace_array=@namespace
-      @namespace=nil
-    end
+#    if @namespace_array.nil?
+#      #TODO: raise "issue #{@name} - not specifying namespace_array (gave namespace of #{@namespace})"
+#      @namespace_array=@namespace
+#      @namespace=nil
+#    end
     
-    if @namespace_array.class == String
-      raise "issues #{@name} - #{@namespace_array}" if @namespace_array[/urn:/]
-    elsif @namespace_array.nil?
-      raise "#{name} missing namespace"
+#    if @namespace_array.class == String
+#      raise "issues #{@name} - #{@namespace_array}" if @namespace_array[/urn:/]
+    if @namespace_array.nil?
+      raise "#{name} missing namespace" unless not @namespace.nil? and @namespace[/http:/]
     else
       @namespace="urn:#{@namespace_array.join('-')}:#{name}" if @namespace.nil?
     end

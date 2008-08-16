@@ -9,7 +9,7 @@ class Xsd < ActiveRecord::Base
     else
       #we get our own namespace and filename
       c2=WsdlDef.parse(name, {
-        :namespace =>[name,"schemas","company","com"],
+        :namespace_array =>[name,"schemas","company","com"],
         :namespace_abbr => "data-#{name}",
         :file_name => xsd_file_name
       },contents)

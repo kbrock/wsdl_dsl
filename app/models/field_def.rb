@@ -1,9 +1,9 @@
 #TODO: decide split w/ exception?
 ## a field can be a class variable, method variable, or an fault variable
 ## this has a type and name
-## for arrays, this has a minimum number and a max number ('unlimited' means ...)
+## for arrays, this has a minimum number and a max number ('unbounded' means ...)
 class FieldDef < NamespacedNode
-   
+  #unlimited number of entries
   UNBOUNDED="unbounded"
 
   attr_accessor :field_type, :min, :max
