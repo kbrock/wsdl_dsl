@@ -3,8 +3,8 @@
 <% end -%>
 <xs:simpleType name="<%= enumeration.soap_name %>">
 	<xs:restriction base="<%= enumeration.field_type.qualified_soap_name%>">
-<% enumeration.values.each do | v| %>
+<% enumeration.values.each do | v| -%>
 		<xs:enumeration value="<%=v%>" />
-<% end %>
+<% end -%>
 	</xs:restriction>
 </xs:simpleType>

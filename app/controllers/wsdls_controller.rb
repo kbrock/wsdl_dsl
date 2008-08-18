@@ -16,8 +16,7 @@ class WsdlsController < ApplicationController
     end
   end
 
-  # GET /wsdls/1
-  # GET /wsdls/1.xml
+  # GET /wsdls/1{.xml}
   def show
     begin
       @code = @wsdl.code
@@ -28,8 +27,8 @@ class WsdlsController < ApplicationController
     respond_to do |format|
       format.html # show.rhtml
       format.xml  { render :xml => @wsdl.to_xml }
-      format.wsdl { render :template => 'wsdls/show_wsdl', :layout => false }
-      format.dot  { render :inline=> Gen::DotGen.new.wsdl_dot(@code,params[:ignore]), :layout => false }
+      format.wsdl { render :template => 'wsdls/show', :layout => false }
+      format.dot  { render :inline=> Gen::DotGen.new.wsdl_dot(@code,params[:ignore]) }
       format.png { png }
     end
     if params[:format] == 'table.html'
@@ -39,14 +38,10 @@ class WsdlsController < ApplicationController
 
   # GET /wsdls/1/java.zip
   def java
-    #defaults to true, but otherwise false
-    external = params[:external]=='true' || params[:external]==true
+    #external means defaults to true, but otherwise false
+    external = (params[:external]=='true') || (params[:external]==true)
 
     @code = @wsdl.code(nil,external) #will raise exceptions - let it go through
-
-#    debug to ensure the correct java types are in there
-#    render :text=>"e types #{@code.local_types.collect(){|t| t.name}.join(",")}"
-#    return
 
     file_name=@wsdl.zip_file_name
     tmp_zipfile="#{RAILS_ROOT}/tmp/#{file_name}"
@@ -57,9 +52,6 @@ class WsdlsController < ApplicationController
 
   # GET /wsdls/1.png (called from show)
   def png
-    #do dot
-    #put png directly into cache dir
-    
     tmp_pngfile=Gen::PngGen.new.dot_to_png("#{@wsdl.name}_wsdl", Gen::DotGen.new.wsdl_dot(@code,params[:ignore]))
     send_file tmp_pngfile, :type=>'image/png', :disposition=>'inline'
     #File.delete(tmp_pngfile)

@@ -1,33 +1,27 @@
 <% if complexelement.description -%>
         <!-- <%=complexelement.description%>-->
 <% end -%>
-<% if true #is a complex element -%>
-        <xs:element name="<%= complexelement.soap_name %>">
-            <xs:complexType>
-<% else -%>
-        <xs:complexType name="<%= complexelement.soap_name %>">
-<% end -%>
+        	<xs:element name="<%= complexelement.soap_name %>">
 <% if false #has a parent class -%>
             <xs:complexContent>
 			  <xs:extension base="baseClass">
 <% end #has a parent class -%>
 <% unless complexelement.fields.empty? -%>
-		    <xs:sequence>
+				<xs:complexType>
+				<xs:sequence>
 <% complexelement.fields.each do |f| -%>
 <% unless f.hidden? #dont show hidden types -%>
 <% if f.description -%>
-        		<!-- <%=f.description%>-->
+					<!-- <%=f.description%>-->
 <% end -%>
-			    <xs:element name="<%=f.name%>" type="<%=f.qualified_type_soap_name %>"<%=" minOccurs='#{f.min}' maxOccurs='#{f.max}'" unless f.max.nil? %>/>
+					<xs:element name="<%=f.name%>" type="<%=f.qualified_type_soap_name %>"<%=" minOccurs='#{f.min}' maxOccurs='#{f.max}'" unless f.max.nil? %>/>
 <% end -%>
 <% end #dont show hidden types -%>
-		    </xs:sequence>
+				</xs:sequence>
+				</xs:complexType>
 <% if false #has a parent class -%>
-			  </xs:extension>
-            </xs:complexContent>
+			</xs:extension>
+			</xs:complexContent>
 <% end #has a parent class -%>
 <% end -%>
-	    </xs:complexType>
-<% if true #is a complex element -%>
-	</xs:element>
-<% end #is a complex element -%>
+		</xs:element>

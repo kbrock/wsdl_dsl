@@ -25,7 +25,7 @@ class XsdsController < ApplicationController
       format.html # show.rhtml
       format.xml  { render :xml => @xsd.to_xml }
       format.xsd  { render :template => 'xsds/show_xsd', :layout => false }
-      format.dot  { render :inline=> Gen::DotGen.new.xsd_dot(@code,params[:ignore]), :layout => false }
+      format.dot  { render :inline=> Gen::DotGen.new.xsd_dot(@code,params[:ignore]) }
       format.png { png }
     end
   end

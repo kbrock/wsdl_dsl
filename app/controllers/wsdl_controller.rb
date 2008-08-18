@@ -25,12 +25,12 @@ class WsdlController < ApplicationController
     
     @wsdl=Wsdl.find_by_name(params[:id])
     @code = @wsdl.code nil,external
-    render :template => 'wsdls/show_wsdl', :layout => false ,:content_type=>"application/xml"
+    render :template => 'wsdls/show', :layout => false ,:content_type=>"application/xml"
   end
 
   def xsd
     @xsd=Xsd.find_by_name(params[:id])
     @code = @xsd.code
-    render :template => 'xsds/show_xsd', :layout => false, :content_type=>"application/xml"
+    render :template => 'xsds/show', :layout => false, :content_type=>"application/xml"
   end
 end
