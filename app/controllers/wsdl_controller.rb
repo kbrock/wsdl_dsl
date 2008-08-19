@@ -10,7 +10,7 @@ class WsdlController < ApplicationController
 #  #TODO: for both, lookup mime_type :mime_type => Mime::Type["text/calendar"]
 
   def show
-    if params[:format] == 'wsdl' or params[:format] == 'inline.wsdl'
+    if params[:format] == 'wsdl'
       wsdl
     elsif params[:format]=='xsd'
       xsd

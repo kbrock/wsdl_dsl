@@ -1,34 +1,115 @@
 module Gen
-class DotGen
-  #exact will link to this exact location. unfortunatly it ends up with extra lines. so this is disabled for now
+  class DotGen
+    class DotTemplate
 
-  def wsdl_dot(code,ignore=[])
-    ignore=fix_ignore(ignore)
-    @wsdl_template.result(binding)
-  end
+      def initialize(name, offset,src=nil)
+        compile(name,offset,src)
+      end
+      
+      def run(code,ignore=[])
+        ignore=fix_ignore(ignore)
+        run_template(binding)
+      end
+      
+      include CodeTemplate
 
-  def xsd_dot(code,ignore=[])
-    ignore=fix_ignore(ignore)
-    @xsd_template.result(binding)
-  end
+      #helper
+      def fix_ignore(ignore)
+        if ignore.nil?
+          ignore=[]
+        elsif ignore.class==String
+          ignore=ignore.split(',')
+        else
+          ignore
+        end
+      end
 
-  #helper
-  def fix_ignore(ignore)
-    if ignore.nil?
-      ignore=[]
-    elsif ignore.class==String
-      ignore=ignore.split(',')
-    else
-      ignore
+      ## helper methods
+      def dot_struct(s,name=nil,label=nil, defined=nil)
+        defined[s.name]=true if not defined.nil?
+        rslts=[]
+        rslts << "#{name||s.name} [label=\"{#{label||name||s.name}#{'|' unless @exact}"
+        qualifier=""
+        s.fields.each do |f| #fields in the method
+          qualifier = "|<#{f.name}> " if @exact
+          fname=f.name
+          fname="#{fname}[]" if f.array?
+          if f.hidden?
+            fname="((#{fname}))"
+          else
+            fname="(#{fname})" if f.optional? and not f.output? and not f.array?
+          end
+          fname="#{fname} *" if f.output?
+          rslts << "#{qualifier}#{fname}\\l"
+        end #fields in the method
+        rslts << "}\"]"
+
+        rslts.join("")
+      end
+
+      def dot_links(s,name=nil,defined=[],ignore=[])
+        rslts=[]
+        if @exact
+          qualifier="#{name||s.name}:"
+        else
+          qualifier=""
+        end
+        s.fields.each do |f| #fields
+          if f.field_type.complex? and not ignore.include?(f.field_type.name) # only link to detailed types
+        		#if it hasn't been defined, then mark that we need more information
+      		  defined[f.field_type.name]=false if defined[f.field_type.name].nil?
+      		  if @exact
+      		    src="#{qualifier}#{f.name}"
+     		      src_compass="e"
+    		    else
+    		      src="#{name||s.name}"
+    	        src_compass="s"
+    	      end
+      		  if f.field_type == s #link to myself
+         		  rslts<< "#{src}:e -> #{src}:e"
+       		  else #don't link to myself
+         		  rslts<< "#{src}:#{src_compass} -> #{f.field_type.name}:n [len=0.2]"
+       		  end #don't link to myself
+      	  end #link to detailed types
+        end #fields
+        rslts.join("\n")
+      end
+
+      def dot_recurse(defined,ignore,lookup)
+        rslts=[]
+        while defined.has_value?(false) do #need to define something
+        	defined.each do |n,v| #complex types referenced
+        	  unless v # if we still need to define this thing
+        	    s=lookup[n]
+        	    raise "couldn't find type #{n}" if s.nil?
+        	    rslts << dot_struct(s,nil,nil,defined)
+        	    raise "for some reason didn't set #{n} to true " unless defined[n]==true
+        	    rslts << dot_links(s,nil,defined,ignore)
+        	  end # if we still need to define this thing
+        	end #complex types 
+        end #have something to define
+        rslts.join("\n")
+      end
     end
-  end
-  
-  def initialize()
-    @exact=false    
-    @wsdl_template=ERB.new(%q{
+    #exact will link to this exact location. unfortunatly it ends up with extra lines. so this is disabled for now
+    def wsdl_dot(code,ignore=[])
+      @wsdl_template.run(code,ignore)
+    end
+
+    def xsd_dot(code,ignore=[])
+      @xsd_template.run(code,ignore)
+    end
+
+    def initialize()
+      @exact=false    
+      @wsdl_template=DotTemplate.new("dot",105,%q{
 #
 #  service <%=code.name%>
 #
+digraph <%= code.name %> {
+	label="<%= code.name %>"
+	node [ shape=Mrecord, color="#3d6b8e", fontcolor="#334466", width="1.2", fillcolor="#eeeeee", style=filled ]
+	edge [ color="#3d6b8e", labelcolor="#334466"]
 <%
   #list of all the complex types that are referenced / need to be defined.
   # true means it is defined, false means it needs to be defined
@@ -36,14 +117,7 @@ class DotGen
   ignore.each do |f| #for each ignored parameter
 	  defined[f]=true #mark it that we have already defined it
   end
--%>
-digraph <%= code.name %> {
-	label="<%= code.name %>"
-	node [ shape=Mrecord, color="#3d6b8e", fontcolor="#334466", width="1.2", fillcolor="#eeeeee", style=filled ]
-	edge [ color="#3d6b8e", labelcolor="#334466"]
 
-  
-<%
   p_m = nil
   code.methods.each do |m| #all the methods
 -%>
@@ -90,8 +164,8 @@ digraph <%= code.name %> {
   dot_recurse(defined,ignore,code)
 -%>
 }
-},nil,"-")
-    @xsd_template=ERB.new(%q{
+})
+      @xsd_template=DotTemplate.new('xsd',171,%q{
 #
 #  xsd <%=code.name%>
 #
@@ -122,7 +196,7 @@ digraph <%= code.name %> {
 <%= dot_links(t,nil,defined,ignore) %>
 <%#   end #derived types-%>
 <% end #all local faults-%>
-	
+
 	// these are referenced from local types to external types
 	// show these a little differently
 	edge [ style=dashed]
@@ -131,74 +205,7 @@ digraph <%= code.name %> {
   dot_recurse(defined,ignore,code)
 -%>
 }
-},nil,"-")
-
-  end
-  ## helper methods
-  def dot_struct(s,name=nil,label=nil, defined=nil)
-    defined[s.name]=true if not defined.nil?
-    rslts=[]
-    rslts << "#{name||s.name} [label=\"{#{label||name||s.name}#{'|' unless @exact}"
-    qualifier=""
-    s.fields.each do |f| #fields in the method
-      qualifier = "|<#{f.name}> " if @exact
-      fname=f.name
-      fname="#{fname}[]" if f.array?
-      if f.hidden?
-        fname="((#{fname}))"
-      else
-        fname="(#{fname})" if f.optional? and not f.output? and not f.array?
-      end
-      fname="#{fname} *" if f.output?
-      rslts << "#{qualifier}#{fname}\\l"
-    end #fields in the method
-    rslts << "}\"]"
-
-    rslts.join("")
-  end
-
-  def dot_links(s,name=nil,defined=[],ignore=[])
-    rslts=[]
-    if @exact
-      qualifier="#{name||s.name}:"
-    else
-      qualifier=""
+})
     end
-    s.fields.each do |f| #fields
-      if f.field_type.complex? and not ignore.include?(f.field_type.name) # only link to detailed types
-    		#if it hasn't been defined, then mark that we need more information
-  		  defined[f.field_type.name]=false if defined[f.field_type.name].nil?
-  		  if @exact
-  		    src="#{qualifier}#{f.name}"
- 		      src_compass="e"
-		    else
-		      src="#{name||s.name}"
-	        src_compass="s"
-	      end
-  		  if f.field_type == s #link to myself
-     		  rslts<< "#{src}:e -> #{src}:e"
-   		  else #don't link to myself
-     		  rslts<< "#{src}:#{src_compass} -> #{f.field_type.name}:n [len=0.2]"
-   		  end #don't link to myself
-  	  end #link to detailed types
-    end #fields
-    rslts.join("\n")
   end
-
-  def dot_recurse(defined,ignore,lookup)
-    rslts=[]
-    while defined.has_value?(false) do #need to define something
-    	defined.each do |n,v| #complex types referenced
-    	  unless v # if we still need to define this thing
-    	    s=lookup[n]
-    	    raise "couldn't find type #{n}" if s.nil?
-    	    rslts << dot_struct(s,nil,nil,defined)
-    	    raise "for some reason didn't set #{n} to true " unless defined[n]==true
-    	    rslts << dot_links(s,nil,defined,ignore)
-    	  end # if we still need to define this thing
-    	end #complex types 
-    end #have something to define
-    rslts.join("\n")
-  end
-end
 end

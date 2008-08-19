@@ -15,7 +15,7 @@ ActionController::Routing::Routes.draw do |map|
   #  map.connect 'wsdl/:id.inline.wsdl', :controller => 'wsdl', :action=>'wsdl',:external=>'false'
   #  map.connect 'wsdl/:id.:format', :controller => 'wsdl', :action=>'xsd',:requirements => {:format => /xsd/ }
   #  map.connect 'wsdl/:id.:format', :controller => 'wsdl', :action=>'wsdl',:requirements => {:format => /wsdl/ }
-  map.connect 'wsdl/:id.inline.wsdl', :controller => 'wsdl', :action=>'show', :external=>'false', :format=>'inline.wsdl'
+  map.connect 'wsdl/:id.inline.wsdl', :controller => 'wsdl', :action=>'show', :external=>'false', :format=>'wsdl'
   map.connect 'wsdl/:id.:format', :controller => 'wsdl', :action=>'show'
   map.connect 'wsdl/', :controller => 'wsdl'
   map.connect 'ping/:hostname', :controller => 'ping', :action => 'index'

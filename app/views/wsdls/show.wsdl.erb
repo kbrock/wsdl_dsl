@@ -1,97 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions
-<%#     xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
-		xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
-		xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
-		xmlns:wsrm="http://schemas.xmlsoap.org/ws/2005/02/rm/policy"
-		xmlns:sc="http://schemas.sun.com/2006/03/wss/server" 
-		xmlns:wspp="http://java.sun.com/xml/ns/wsit/policy"
--%>
-		xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-		xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
 <%  @code.namespaces.each do |t| -%>
-		xmlns:<%=t.namespace_abbr%>="<%=t.soap_namespace%>"
+    xmlns:<%=t.namespace_abbr%>="<%=t.soap_namespace%>"
 <%  end -%>
-		targetNamespace="<%=@code.soap_namespace%>"
-		name="<%=@code.cc_name%>Service">
+    targetNamespace="<%=@code.soap_namespace%>"
+    name="<%=@code.cc_name%>Service">
 <%# policy import here -%>
-	<types>
-		<xs:schema xmlns="http://www.w3.org/2001/XMLSchema"
-				targetNamespace="<%=@code.soap_namespace%>"
-				elementFormDefault="unqualified"
-				attributeFormDefault="unqualified">
+  <types>
+    <xs:schema xmlns="http://www.w3.org/2001/XMLSchema"
+               targetNamespace="<%=@code.soap_namespace%>"
+               elementFormDefault="unqualified"
+               attributeFormDefault="unqualified">
 <% @code.external_types.each do |t| -%>
-			<xs:import namespace="<%=t.soap_namespace%>" schemaLocation="<%=t.file_name %>" />
+      <xs:import namespace="<%=t.soap_namespace%>" schemaLocation="<%=t.file_name %>" />
 <% end -%>
 <% @code.local_types.each do |t| -%>
 <% if t.complex? -%>
-<%= render :partial => 'shared/complextype', :object=>t %>
+<%= render :partial => 'shared/complextype.xsd.erb', :object=>t %>
 <% end #complex -%>
 <% end #types -%>
 <% @code.local_enumerations.each do |e| -%>
 <%= render :partial => 'shared/enumeration', :object=>e  %>
 <% end -%>
-<!-- method request, responses -->
+  <!-- method request, responses -->
 <% @code.methods.each do |m| -%>
 <%= render :partial => 'shared/complexelement', :object=>m.inputs %>
 <%= render :partial => 'shared/complexelement', :object=>m.outputs %>
 <% end -%>
-<!-- faults -->
+  <!-- faults -->
 <% @code.faults.each do |t| -%>
 <%= render :partial => 'shared/complexelement', :object=>t %>
 <% end -%>
-		</xs:schema>
-	</types>
-<!-- messages -->
+    </xs:schema>
+  </types>
+  <!-- messages -->
 <% @code.methods.each do |m| -%>
-	<message name="<%=m.inputs.soap_name%>">
-		<part name="parameters" element="<%=m.inputs.qualified_soap_name%>" />
-	</message>
-	<message name="<%=m.outputs.soap_name%>">
-		<part name="parameters" element="<%=m.outputs.qualified_soap_name%>" />
-	</message>
+  <message name="<%=m.inputs.soap_name%>">
+    <part name="parameters" element="<%=m.inputs.qualified_soap_name%>" />
+  </message>
+  <message name="<%=m.outputs.soap_name%>">
+    <part name="parameters" element="<%=m.outputs.qualified_soap_name%>" />
+  </message>
 <% end -%>
 <% @code.faults.each do |t| -%>
-	<message name="<%=t.soap_name%>">
-		<part name="fault" element="<%=t.qualified_soap_name%>"/>
-	</message>
+  <message name="<%=t.soap_name%>">
+    <part name="fault" element="<%=t.qualified_soap_name%>"/>
+  </message>
 <% end -%>
-<!-- port -->
-	<portType name="<%=@code.cc_name%>PortType">
+  <!-- port -->
+  <portType name="<%=@code.cc_name%>PortType">
 <% @code.methods.each do |m| -%>
-		<operation name="<%=m.name%>">
-			<input message="<%=m.inputs.qualified_soap_name%>" />
-			<output message="<%=m.outputs.qualified_soap_name%>" />
-<% m.faults.each do |f|%>
-			<fault name="<%= f.soap_name%>" message="<%=f.qualified_soap_name%>"/>
-<% end -%>
-		</operation>
-<% end -%>
-	</portType>
-<!-- binding -->
-	<binding name="<%=@code.cc_name%>Binding" type="<%=@code.namespace_abbr%>:<%=@code.cc_name%>PortType">
-		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-<% @code.methods.each do |m| -%>
-		<operation name="<%=m.name%>">
-			<soap:operation soapAction="/<%=m.name%>" style="document"/>
-			<input>
-				<soap:body use="literal"/>
-			</input>
-			<output>
-				<soap:body use="literal"/>
-			</output>
+    <operation name="<%=m.name%>">
+      <input message="<%=m.inputs.qualified_soap_name%>" />
+      <output message="<%=m.outputs.qualified_soap_name%>" />
 <% m.faults.each do |f| -%>
-			<fault name="<%= f.soap_name%>">
-				<soap:fault name="<%=f.soap_name%>" use="literal"/>
-			</fault>
+      <fault name="<%= f.soap_name%>" message="<%=f.qualified_soap_name%>"/>
 <% end -%>
-		</operation>
+    </operation>
 <% end -%>
-	</binding>
+  </portType>
+  <!-- binding -->
+  <binding name="<%=@code.cc_name%>Binding" type="<%=@code.namespace_abbr%>:<%=@code.cc_name%>PortType">
+  <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+<% @code.methods.each do |m| -%>
+    <operation name="<%=m.name%>">
+      <soap:operation soapAction="/<%=m.name%>" style="document"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+<% m.faults.each do |f| -%>
+      <fault name="<%= f.soap_name%>">
+        <soap:fault name="<%=f.soap_name%>" use="literal"/>
+      </fault>
+<% end -%>
+    </operation>
+<% end -%>
+  </binding>
 <!-- service -->
-	<service name="<%=@code.cc_name%>Service">
-		<port name="<%=@code.cc_name%>Port" binding="<%=@code.namespace_abbr%>:<%=@code.cc_name%>Binding">
-			<soap:address location="<%=@code.service_url%>"/>
-		</port>
-	</service>
+  <service name="<%=@code.cc_name%>Service">
+    <port name="<%=@code.cc_name%>Port" binding="<%=@code.namespace_abbr%>:<%=@code.cc_name%>Binding">
+      <soap:address location="<%=@code.service_url%>"/>
+    </port>
+  </service>
 </definitions>

@@ -16,7 +16,7 @@ class WsdlsController < ApplicationController
     end
   end
 
-  # GET /wsdls/1{.xml}
+  # GET /wsdls/1
   def show
     begin
       @code = @wsdl.code
@@ -26,17 +26,21 @@ class WsdlsController < ApplicationController
     end
     respond_to do |format|
       format.html # show.rhtml
-      format.xml  { render :xml => @wsdl.to_xml }
       format.wsdl { render :template => 'wsdls/show', :layout => false }
       format.dot  { render :inline=> Gen::DotGen.new.wsdl_dot(@code,params[:ignore]) }
       format.png { png }
     end
-    if params[:format] == 'table.html'
-      render :template => 'wsdls/table', :layout=>true
-    end
   end
 
-  # GET /wsdls/1/java.zip
+  # GET /wsdls/1.png (called from show)
+  def png
+    tmp_pngfile=Gen::PngGen.new.dot_to_png("#{@wsdl.name}_wsdl",
+                    Gen::DotGen.new.wsdl_dot(@code,params[:ignore]))
+    send_file tmp_pngfile, :type=>'image/png', :disposition=>'inline'
+    #File.delete(tmp_pngfile)
+  end
+
+  # GET /wsdls/1/javaa.zip
   def java
     #external means defaults to true, but otherwise false
     external = (params[:external]=='true') || (params[:external]==true)
@@ -48,13 +52,6 @@ class WsdlsController < ApplicationController
     Gen::CodeGen.new.create_zip(@code,tmp_zipfile)
     send_file tmp_zipfile, :filename=>file_name, :type=>'application/zip'
     #File.delete(tmp_zipfile)
-  end
-
-  # GET /wsdls/1.png (called from show)
-  def png
-    tmp_pngfile=Gen::PngGen.new.dot_to_png("#{@wsdl.name}_wsdl", Gen::DotGen.new.wsdl_dot(@code,params[:ignore]))
-    send_file tmp_pngfile, :type=>'image/png', :disposition=>'inline'
-    #File.delete(tmp_pngfile)
   end
 
   def table
@@ -159,6 +156,6 @@ class WsdlsController < ApplicationController
     expire_page(:controller=>'wsdls', :action => 'java',  :format => 'zip', :id=>wsdl.id)
 
     expire_page(:controller=>'wsdl', :action => 'show', :id=>wsdl.name, :format => 'wsdl')
-    expire_page(:controller=>'wsdl', :action => 'show', :id=>wsdl.name, :format => 'inline.wsdl')
+#    expire_page(:controller=>'wsdl', :action => 'show', :id=>wsdl.name, :format => 'inline.wsdl')
   end
 end

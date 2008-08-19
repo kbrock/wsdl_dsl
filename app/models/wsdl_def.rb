@@ -29,33 +29,15 @@ class WsdlDef < NamespacedNode
   end
 
   def local_types()
-    ret=[]
-  	types.each do |t|
-  	  if t.file_name == file_name
-      	ret << t 
-    	end
-    end
-    ret
+  	types.select { |t| t.file_name == file_name }
   end 
   
   def local_enumerations()
-    ret=[]
-  	enumerations.each do |t|
-  	  if t.file_name == file_name
-      	ret << t 
-    	end
-    end
-    ret
+  	enumerations.select { |t| t.file_name == file_name }
   end
 
   def local_faults()
-    ret=[]
-  	faults.each do |t|
-  	  if t.file_name == file_name
-      	ret << t 
-    	end
-    end
-    ret
+  	faults.select { |t| t.file_name == file_name }
   end
   
   ## types that have unique namespaces
@@ -166,16 +148,14 @@ class WsdlDef < NamespacedNode
   end
 
   def create_fault(name=nil,options={})
-    name||="#{cc_name}ServiceFault" 
-    options2 = options_array({:type=>"Fault",:lookup=>self},options)
-    fld=FieldsDef.new name, options2
-    @faults << fld
-    fld
   end
   
   ##dsl: define a fault
   def fault(name=nil, options={}, &block)
-    f=create_fault(name,options)
+    name||="#{cc_name}ServiceFault" 
+    options2 = options_array({:type=>"Fault",:lookup=>self},options)
+    f=FieldsDef.new name, options2
+    @faults << f
     f.instance_eval(&block) if block_given?
     f
   end
@@ -183,9 +163,9 @@ class WsdlDef < NamespacedNode
   def method(name, options={}, str=nil, &block)
     options2= options_array({:lookup=>self},options)
     meth=MethodDef.new name, options2
+    @methods << meth
     meth.instance_eval(str) unless str.nil?
     meth.instance_eval(&block) if block_given?
-    @methods << meth
     meth
   end
 
@@ -197,7 +177,7 @@ class WsdlDef < NamespacedNode
     methods.concat(wsdl2.methods)
   end
 
-  ## dsl: create default crrud methods  
+  ## dsl: create default crud methods  
   def crud(single,plural=nil,flt=nil,options={})
     single=find_type_by_name single
     
@@ -243,14 +223,6 @@ class WsdlDef < NamespacedNode
     #if they are doing a type definition, then they will include 
     t = find_type_by_name(meth.to_s)||find_fault_by_name(meth.to_s)
     if t.nil?
-      #they forgot the colon
-#      return :explode if meth.to_s == 'explode'
-#      return :exclude if meth.to_s == 'exclude'
-#      return :plural if meth.to_s == 'plural'
-#      return :array if meth.to_s == 'array'
-#      return :values if meth.to_s == 'values'
-
-      #otherwise, try and return a useful error message
       raise "unknown phrase '#{meth}'. It may be misspelled or missing quotes."
     else #they are defining a type
       return t

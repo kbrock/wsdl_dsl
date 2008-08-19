@@ -1,11 +1,3 @@
-<h1>http://<%=@wsdl.host%>/<%=@wsdl.application%>/services/<%=@wsdl.soap_name%> [<%= link_to 'Edit', edit_wsdl_path(@wsdl) %>]</h1>
-<!-- @wsdl.code.soap_name, @wsdl.name -->
-<p>Xsds referenced:
-<% @wsdl.xsds.each do |x| -%>
-    <%= link_to x.name, edit_xsd_path(x) %>
-<% end -%>
-</p>
-
 <% @code.methods.each do |m| -%>
 <h2><%=m.name%></h2>
 <% if m.description -%>
@@ -14,22 +6,26 @@
 <!-- diagram -->
 <table>
 <tbody>
+<% unless m.inputs.fields.empty? -%>
 <tr><th colspan="2">inputs:</th></tr>
 <tr>
 	<th>field</th>
 	<th>description</th>
 </tr>
+<% end -%>
 <% m.inputs.fields.each do |f| -%>
 <tr>
 	<td><%=f.name%></td>
 	<td><%=f.description%></td>
 </tr>
 <% end -%>
+<% unless m.outputs.fields.empty? -%>
 <tr><th colspan="2">outputs:</th></tr>
 <tr>
 	<th>field</th>
 	<th>description</th>
 </tr>
+<% end -%>
 <% m.outputs.fields.each do |f| -%>
 <tr>
 	<td><%=f.name%></td>

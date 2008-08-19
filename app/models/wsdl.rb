@@ -1,30 +1,31 @@
 class Wsdl < ActiveRecord::Base
+  include CamelCase
   
   has_and_belongs_to_many :xsds
 
   def code c=nil,external=true
     c||=WsdlDef.new name, {
-      :namespace_array => [name,"services","company","com"],
-      :namespace_abbr => "tns",
+      :namespace_array => namespace.split(","),
+      :namespace_abbr => namespace_abbr,
       :file_name => wsdl_file_name
       }
     c.host=host||"localhost"
     c.application=application||"application"
-    #TODO: use path for the wsdl
+
+    #define structures from referenced xsds
     xsds.each do |x|
       begin
         x.code(c, external)
       rescue => e
-        #would be nice to display just the message (line number too? use backtrace?)
         raise "trouble parsing #{x.name}, #{e}"
       end
     end unless xsds.nil?
 
+    # define data structures from the wsdl
     c.parse(contents) unless contents.nil?
     c
   end
 
-  include CamelCase
   #only used by soap_name
   def cc_name()
     #@code.cc_name

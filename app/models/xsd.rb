@@ -9,8 +9,8 @@ class Xsd < ActiveRecord::Base
     else
       #we get our own namespace and filename
       c2=WsdlDef.parse(name, {
-        :namespace_array =>[name,"schemas","company","com"],
-        :namespace_abbr => "data-#{name}",
+        :namespace_array => namespace.split(","),
+        :namespace_abbr => namespace_abbr,
         :file_name => xsd_file_name
       },contents)
       #if they passed in a class, then merge our stuff into theirs (keeping our own distinct namespace)
@@ -29,7 +29,13 @@ class Xsd < ActiveRecord::Base
   def zip_file_name()
     "java_#{name}_xsd.zip"
   end
-
+  
+  # def namespace
+  #   [name,"schemas","company","com"]
+  # end
+  # def namespace_abbr
+  #   "data-#{name}"
+  # end
 #  def to_param
 #    name
 #  end
