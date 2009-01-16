@@ -12,8 +12,8 @@ module Gen
       }
 
       errors=system("\"#{DOT_CMD}\" -Tpng #{tmp_dotfile} -o #{tmp_pngfile}")
-      RAILS_DEFAULT_LOGGER.info("ran dot cmd \"#{DOT_CMD}\" -Tpng #{tmp_dotfile} -o #{tmp_pngfile}")
-      RAILS_DEFAULT_LOGGER.info(errors)
+#      RAILS_DEFAULT_LOGGER.info("ran dot cmd \"#{DOT_CMD}\" -Tpng #{tmp_dotfile} -o #{tmp_pngfile}")
+#      RAILS_DEFAULT_LOGGER.info(errors)
       File.delete(tmp_dotfile) if File.file?(tmp_dotfile)
     
       tmp_pngfile

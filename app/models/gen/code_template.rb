@@ -1,8 +1,8 @@
 module Gen
-  module CodeTemplate
+  class CodeTemplate
     attr_accessor :name,:src,:template
 
-    def compile(name, offset, src)
+    def compile(name, offset, src, mixin=nil)
       @name=name
       if(src==nil)
         @src=offset
@@ -12,6 +12,7 @@ module Gen
         @offset=offset
       end
       @template=ERB.new(@src,nil,"-")
+      extend(mixin) unless mixin.nil?
     end
   
     ## obj is the object, objname is the filename / obj + ext

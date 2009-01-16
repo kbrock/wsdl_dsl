@@ -177,7 +177,7 @@ class WsdlDef < NamespacedNode
     methods.concat(wsdl2.methods)
   end
 
-  ## dsl: create default crud methods  
+  ## dsl: create default crrud methods  
   def crud(single,plural=nil,flt=nil,options={})
     single=find_type_by_name single
     

@@ -11,7 +11,7 @@
 <p style="color: green"><%= flash[:notice] %></p>
 <!-- header -->
 <%= link_to 'home', "/wsdl/" %> >
-<!-- (  New 
+<!-- ( New 
 <%= link_to 'wsdl', new_wsdl_path %> 
 <%= link_to 'xsd', new_xsd_path %> ) > 
 -->
@@ -19,14 +19,12 @@
 
 <b><%= "WSDL #{@wsdl.name}"%></b>  |
 <%#= link_to "WSDL #{@wsdl.name}",formatted_wsdl_path(@wsdl,:html) -%>
-
 <% if controller.action_name == "edit" # link to show for edit -%>
 <%= link_to 'show', formatted_wsdl_path(@wsdl,:html) %> |
 <% else #link to edit for show -%>
 <%= link_to 'edit', formatted_edit_wsdl_path(@wsdl,:html) %> |
 <% end %>
-<%= link_to 'wsdl', "/wsdl/#{@wsdl.name}.wsdl" %>
-[<%= link_to 'inline', "/wsdl/#{@wsdl.name}.inline.wsdl" %>] |
+<%= link_to 'wsdl', "/wsdl/#{@wsdl.name}.wsdl" %> [<%= link_to 'inline', "/wsdl/#{@wsdl.name}.inline.wsdl" %>] |
 <%= link_to 'picture', formatted_wsdl_path(@wsdl,:png) %> |
 <%= link_to 'java', formatted_java_wsdl_path(@wsdl,:zip) %>
 <!--
@@ -55,16 +53,15 @@
 <% else #link to edit for show -%>
 <%= link_to 'edit', formatted_edit_wsdl_path(@wsdl,:html) %> |
 <% end %>
-<%= link_to 'wsdl', "/wsdl/#{@wsdl.name}.wsdl" %>
-[<%= link_to 'inline', "/wsdl/#{@wsdl.name}.inline.wsdl" %>] |
+<%= link_to 'wsdl', "/wsdl/#{@wsdl.name}.wsdl" %> [<%= link_to 'inline', "/wsdl/#{@wsdl.name}.inline.wsdl" %>] |
 <%= link_to 'picture', formatted_wsdl_path(@wsdl,:png) %> |
-<%= link_to 'java', formatted_java_wsdl_path(@wsdl,:zip) %>
+<%= link_to 'java code', formatted_java_wsdl_path(@wsdl,:zip) %>
 <!--
 <%= link_to 'dot', formatted_wsdl_path(@wsdl,:dot) %> |
 <%= link_to 'table', formatted_table_wsdl_path(@wsdl,:html) %> |
 <%= link_to 'meta', formatted_meta_wsdl_path(@wsdl,:html) %> |
 -->
-<% end -%>
+<% end # show wsdl if wsdl object is present-%>
 <!-- /footer -->
 </body>
 </html>
