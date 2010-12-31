@@ -1,0 +1,54 @@
+hello
+
+My name is keenan brock
+I'd like to introduce to you a project I just revived
+it is called interfaces
+and it is all about agile soap
+
+my team was developing a web service
+they wanted to use soap
+so I put together the start of a person record
+we met
+we changed the attributes
+I changed the soap
+we met again
+we changed the attributes
+I changed the soap
+
+I suggested we use diagrams for our meetings
+but being coders
+they wanted the diagrams
+they were easier to use
+but they also wanted to see the soap (WSDL)
+
+we kept meeting
+things kept changing
+and changing
+and changing
+
+soap is verbose
+it is not agile
+it is hard to change
+we would think we got a good solution
+but after using the interface
+they suggested more changes
+and being soap
+those changes took time
+
+And this was not just basic soap
+sure it was written in java
+but the clients were in microsoft crm, salesforce.com, java, and flex
+and they don't talk to each other
+even though soap strives to be universal
+it isn't
+we developed a checklist of constraints
+that helps the soap become universal
+
+so i did what every developer does
+I wrote code in one technology that I like
+so that I didn't have to working with a difficult technology (soap) that wasn't so nice
+
+and so I didn't have to remember the checklist of constraints
+that would allow ll these technologies to work together
+that would help
+
