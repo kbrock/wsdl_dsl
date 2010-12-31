@@ -57,49 +57,31 @@ simplified process (less decisions, less debugging / trial and error)
 
 *** little tricky follow the template. (cut and paste errors). How do we improve this?
 
-# 4. DSLn / input
+# 4. DSL / input
 Domain Specific Language allows you to focus more on the domain and less on the implementation of the interface.
 
 - external vs internal DSLs (Martin Fowler of Thought Works terms)
 - ruby and internal DSLs
 
-person
-    enum 'role', :base=>string, :values=>['MANAGER','ENGINEER']
-	type 'person' do
-	  describe "An Employee in a company"
-	  string 'name', :description => "person's full name"
-	  role :description=>'role in the team'
-	  string 'company_name', :optional=>true, :description => "Employer"
-	  string 'street', :description => 'home street address'
-	  string 'city'
-	  string 'state'
-	  string 'zip'
-	end
+- define data structures
+- define methods
+
+person edit, doc, dot, xsd
+
+person_company edit, dot
+person_company, address exploded edit, dot
+person_company_rel edit, dot, xsd
 
 
-xsd picture
-xsd
+wsdl edit, doc, dot, xsd
+wsdl_simple: ruby code in helper method (show helper code in wsdl_def), edit, doc, dot, wsdl, wsdl_inline
 
-DSL for person, company, address
+# 5. Producing the output
 
-xsd picture
-xsd
-
-DSL for person, company, exploded
-xsd picture
-xsd
-
-- quick
-- consistent documents
-- central location for documentation
-- RoR
-
-# 5. output of DSL
 using html templates vs internal erb templates (includes)
 
-
-picture showing the different data types
-sample input, output (picture)
+controller
+producing dot (used to use erb)
 
 # 6. use the app to type in some dsl
 
